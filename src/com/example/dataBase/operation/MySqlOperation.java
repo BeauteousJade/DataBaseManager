@@ -53,8 +53,8 @@ public class MySqlOperation<T extends BaseBean> {
 		if (t.getIdName() == null) {
 			throw new IdNotExistException();
 		}
-		return mMySqlDataBaseManager.update(t.getClassName(), t.getUpdateFieldNames(),
-				t.getUpdateFieldValues(), new String[] { t.getIdName() }, new String[] { t.getId() });
+		return mMySqlDataBaseManager.update(t.getClassName(), t.getSignificativeFieldNames(),
+				t.getSignificativeFieldValues(), new String[] { t.getIdName() }, new String[] { t.getId() });
 	}
 
 	public boolean delete(T t) {
@@ -94,7 +94,7 @@ public class MySqlOperation<T extends BaseBean> {
 	@SuppressWarnings("unchecked")
 	public List<T> queryByValuedField(T t){
 		List<T> list = new ArrayList<>();
-		try (ResultSet resultSet = mMySqlDataBaseManager.query(t.getClassName(), t.getUpdateFieldNames(), t.getUpdateFieldValues());){
+		try (ResultSet resultSet = mMySqlDataBaseManager.query(t.getClassName(), t.getSignificativeFieldNames(), t.getSignificativeFieldValues());){
 			String[] fieldNames = t.getFieldNames();
 			String[] fieldValues = new String[fieldNames.length];
 			while(resultSet.next()) {

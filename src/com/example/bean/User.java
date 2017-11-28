@@ -1,9 +1,15 @@
 package com.example.bean;
 
+import com.example.annotation.MyAnnotation;
 import com.example.bean.baseBean.BaseBean;
 
+/**
+ * 本类用于一个案例，不做过多的解释
+ * @author apple
+ *
+ */
 public class User extends BaseBean {
-	
+	@MyAnnotation(fieldType = MyAnnotation.FieldType.LONG_STRING)
 	private String userName;
 	private String password;
 	private String displayName;
