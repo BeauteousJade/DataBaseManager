@@ -2,11 +2,15 @@ package com.example.dataBase.operation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import com.example.bean.baseBean.BaseBean;
 import com.example.dataBase.Impl.MySqlDataBaseManager;
 import com.example.dataBase.util.PropertiesUtil;
+import com.example.exception.IdIsNullException;
+import com.example.exception.IdNotExistException;
 
 public class MySqlOperation<T extends BaseBean> {
 
@@ -17,10 +21,9 @@ public class MySqlOperation<T extends BaseBean> {
 	}
 
 	public boolean isTableExist(String tableName) {
-		String[] columns = new String[0];
 		String[] selections = new String[] { "table_name" , "TABLE_SCHEMA"};
 		String[] selectionValues = new String[] { tableName, PropertiesUtil.getValue("dataBase.properties", "dataBase")};
-		ResultSet query = mMySqlDataBaseManager.query("INFORMATION_SCHEMA.TABLES", columns, selections,
+		ResultSet query = mMySqlDataBaseManager.query("INFORMATION_SCHEMA.TABLES", selections,
 				selectionValues);
 		boolean isExist = true;
 		try {
@@ -35,33 +38,59 @@ public class MySqlOperation<T extends BaseBean> {
 		return isExist;
 	}
 
-	public boolean insert(T t) {
+	public boolean save(T t) {
 		if (!isTableExist(t.getClassName())
 				&& !mMySqlDataBaseManager.ceareTable(t.getClassName(), t.getFieldNames(), t.getFieldTypes())) {
 			return false;
 		}
-		System.out.println(Arrays.toString(t.getFieldNames()));
-		System.out.println(Arrays.toString(t.getFieldTypes()));
+		t.setId(UUID.randomUUID().toString());
 		return mMySqlDataBaseManager.insert(t.getClassName(), t.getFieldNames(), t.getFieldValues());
 	}
-
 	public boolean update(T t) {
-
-		String[] selectArgNames = new String[] { t.getIdName() };
-		String[] selectArgValues = new String[] { t.getId() };
-		String[] updateArgNames = t.getFieldNames();
-		String[] updateArgValues = t.getFieldValues();
-
-		return mMySqlDataBaseManager.update(t.getClassName(), selectArgNames, selectArgValues, updateArgNames,
-				updateArgValues);
+		if (t.getId() == null) {
+			throw new IdIsNullException();
+		}
+		if (t.getIdName() == null) {
+			throw new IdNotExistException();
+		}
+		return mMySqlDataBaseManager.update(t.getClassName(), t.getUpdateFieldNames(),
+				t.getUpdateFieldValues(), new String[] { t.getIdName() }, new String[] { t.getId() });
 	}
 
 	public boolean delete(T t) {
-
+		if (t.getId() == null) {
+			throw new IdIsNullException();
+		}
+		if (t.getIdName() == null) {
+			throw new IdNotExistException();
+		}
 		return mMySqlDataBaseManager.delete(t.getClassName(), new String[] { t.getIdName() },
 				new String[] { t.getId() });
 	}
-
+	@SuppressWarnings("unchecked")
+	public List<T> query(T t){
+		String idName = t.getIdName();
+		if(idName == null) {
+			throw new IdNotExistException();
+		}
+		
+		List<T> list = new ArrayList<>();
+		try (ResultSet resultSet = mMySqlDataBaseManager.query(t.getClassName(), new String[] {idName}, new String[] {t.getId()});){
+			String[] fieldNames = t.getFieldNames();
+			String[] fieldValues = new String[fieldNames.length];
+			while(resultSet.next()) {
+				for(int i = 0; i < fieldNames.length; i++) {
+					fieldValues[i] = resultSet.getString(fieldNames[i]);
+				}
+				T t1 = (T) t.makeObject(fieldNames, fieldValues);
+				list.add(t1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
 	public void close() {
 		mMySqlDataBaseManager.close();
 	}

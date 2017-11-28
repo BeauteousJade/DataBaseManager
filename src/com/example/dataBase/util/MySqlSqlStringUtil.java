@@ -20,25 +20,15 @@ public class MySqlSqlStringUtil {
 		stringBuilder.append(")");
 		return stringBuilder.toString();
 	}
-	public static String mergeQueryString(String tableName, String selectArgs[], String args[], String values[]) {
-		if (tableName == null || selectArgs == null || args == null || values == null) {
+	public static String mergeQueryString(String tableName, String args[], String values[]) {
+		if (tableName == null  || args == null || values == null) {
 			return null;
 		}
 		if (args.length != values.length) {
 			return null;
 		}
-		String sqlString = "select ";
+		String sqlString = "select * from " + tableName;
 		StringBuilder stringBuilder = new StringBuilder(sqlString);
-		for (int i = 0; i < selectArgs.length; i++) {
-			stringBuilder.append(selectArgs[i]);
-			if (i != selectArgs.length - 1) {
-				stringBuilder.append(",");
-			}
-		}
-		if (selectArgs.length == 0) {
-			stringBuilder.append("* ");
-		}
-		stringBuilder.append(" from " + tableName);
 		for (int i = 0; i < args.length; i++) {
 			if (i == 0) {
 				stringBuilder.append(" where ");
@@ -50,7 +40,6 @@ public class MySqlSqlStringUtil {
 				stringBuilder.append(" and ");
 			}
 		}
-		System.out.println(stringBuilder.toString());
 		return stringBuilder.toString();
 	}
 	public static String mergeUpdateString(String tableName, String[] selectArgs, String[] selectValues,
@@ -81,7 +70,7 @@ public class MySqlSqlStringUtil {
 			stringBuilder.append(updateArgs[i]);
 			stringBuilder.append("=");
 			stringBuilder.append("?");
-			if (i != selectArgs.length - 1) {
+			if (i != updateArgs.length - 1) {
 				stringBuilder.append(" and ");
 			}
 		}

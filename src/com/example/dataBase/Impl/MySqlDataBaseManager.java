@@ -50,7 +50,6 @@ public class MySqlDataBaseManager implements DataBaseManager {
 	@Override
 	public boolean insert(String tableName, String[] argNames, String[] argValues) {
 		String sqlString = MySqlSqlStringUtil.mergeInsertString(tableName, argNames, argValues);
-		System.out.println(sqlString);
 		if (sqlString == null) {
 			return false;
 		}
@@ -88,7 +87,7 @@ public class MySqlDataBaseManager implements DataBaseManager {
 
 	@Override
 	public boolean delete(String tableName, String[] argNames, String[] argValues) {
-		String sqlString = MySqlSqlStringUtil.mergeInsertString(tableName, argNames, argValues);
+		String sqlString = MySqlSqlStringUtil.mergeDeleteString(tableName, argNames, argValues);
 		if (sqlString == null) {
 			return false;
 		}
@@ -104,9 +103,9 @@ public class MySqlDataBaseManager implements DataBaseManager {
 	}
 
 	@Override
-	public ResultSet query(String tableName, String[] columns, String[] selections, String[] selectionValues) {
+	public ResultSet query(String tableName, String[] selections, String[] selectionValues) {
 
-		String sqlString = MySqlSqlStringUtil.mergeQueryString(tableName, columns, selections, selectionValues);
+		String sqlString = MySqlSqlStringUtil.mergeQueryString(tableName, selections, selectionValues);
 		if (sqlString == null) {
 			return null;
 		}

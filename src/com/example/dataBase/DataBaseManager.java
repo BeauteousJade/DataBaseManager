@@ -13,7 +13,7 @@ public interface DataBaseManager {
 	
 	public boolean delete(String tableName, String [] selectArgNames, String []selectArgValues);
 	
-	public ResultSet query(String tableName, String[] columns, String [] selections, String []selectionValues);
+	public ResultSet query(String tableName, String [] selections, String []selectionValues);
 	
 	
 }
