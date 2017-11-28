@@ -9,11 +9,11 @@ public interface DataBaseManager {
 	
 	public boolean insert(String tableName, String[] argNames, String[] argValues);
 	
-	public int update(String tableName, String[] selectArgNames, String [] selectArgValues, String [] updateArgNames, String [] updateArgValues);
+	public boolean update(String tableName, String[] selectArgNames, String [] selectArgValues, String [] updateArgNames, String [] updateArgValues);
 	
 	public boolean delete(String tableName, String [] selectArgNames, String []selectArgValues);
 	
-	public ResultSet query(String tableName, String[] columns, String [] selections, String []selectionArgrs);
+	public ResultSet query(String tableName, String[] columns, String [] selections, String []selectionValues);
 	
 	
 }
