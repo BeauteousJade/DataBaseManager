@@ -67,13 +67,13 @@ public class MySqlOperation<T extends BaseBean> {
 		return mMySqlDataBaseManager.delete(t.getClassName(), new String[] { t.getIdName() },
 				new String[] { t.getId() });
 	}
+	
 	@SuppressWarnings("unchecked")
-	public List<T> query(T t){
+	public List<T> queryById(T t){
 		String idName = t.getIdName();
 		if(idName == null) {
 			throw new IdNotExistException();
-		}
-		
+		}	
 		List<T> list = new ArrayList<>();
 		try (ResultSet resultSet = mMySqlDataBaseManager.query(t.getClassName(), new String[] {idName}, new String[] {t.getId()});){
 			String[] fieldNames = t.getFieldNames();
@@ -90,6 +90,27 @@ public class MySqlOperation<T extends BaseBean> {
 		}
 		return list;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<T> queryByValuedField(T t){
+		List<T> list = new ArrayList<>();
+		try (ResultSet resultSet = mMySqlDataBaseManager.query(t.getClassName(), t.getUpdateFieldNames(), t.getUpdateFieldValues());){
+			String[] fieldNames = t.getFieldNames();
+			String[] fieldValues = new String[fieldNames.length];
+			while(resultSet.next()) {
+				for(int i = 0; i < fieldNames.length; i++) {
+					fieldValues[i] = resultSet.getString(fieldNames[i]);
+				}
+				T t1 = (T) t.makeObject(fieldNames, fieldValues);
+				list.add(t1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+	
 	
 	public void close() {
 		mMySqlDataBaseManager.close();
