@@ -2,12 +2,14 @@ package com.example.bean;
 
 import java.util.UUID;
 
+import com.example.annotation.MyAnnotation;
 import com.example.bean.baseBean.BaseBean;
 import com.example.dataBase.operation.MySqlOperation;
 import com.example.exception.IdIsNullException;
 import com.example.exception.IdNotExistException;
 
 public class User extends BaseBean {
+	
 	private String userName;
 	private String password;
 	private String displayName;

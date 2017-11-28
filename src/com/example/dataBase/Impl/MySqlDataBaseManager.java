@@ -11,6 +11,7 @@ import java.util.Properties;
 
 import com.example.dataBase.DataBaseManager;
 import com.example.dataBase.util.MySqlSqlStringUtil;
+import com.example.dataBase.util.PropertiesUtil;
 
 public class MySqlDataBaseManager implements DataBaseManager {
 
@@ -20,12 +21,9 @@ public class MySqlDataBaseManager implements DataBaseManager {
 		Properties properties = new Properties();
 		try (FileInputStream fis = new FileInputStream("dataBase.properties");) {
 			properties.load(fis);
-			String url = properties.getProperty("url");
-			String userName = properties.getProperty("userName");
-			String password = properties.getProperty("password");
-			String driver = properties.getProperty("driver");
-			Class.forName(driver);
-			mConnection = DriverManager.getConnection(url, userName, password);
+			String []values = PropertiesUtil.getValues("dataBase.properties", "url", "userName", "password", "driver");
+			Class.forName(values[3]);
+			mConnection = DriverManager.getConnection(values[0], values[1], values[2]);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
@@ -37,13 +35,22 @@ public class MySqlDataBaseManager implements DataBaseManager {
 
 	@Override
 	public boolean ceareTable(String tableName, String[] fieldNames, String[] fieldTypes) {
-
+		String sqlString = MySqlSqlStringUtil.mergeCreateTableSql(tableName, fieldNames, fieldTypes);
+		if(sqlString == null) {
+			return false;
+		}
+		try(PreparedStatement prepareStatement = mConnection.prepareStatement(sqlString)) {
+			System.out.println(prepareStatement.toString());
+			return !prepareStatement.execute();
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
-
 	@Override
 	public boolean insert(String tableName, String[] argNames, String[] argValues) {
 		String sqlString = MySqlSqlStringUtil.mergeInsertString(tableName, argNames, argValues);
+		System.out.println(sqlString);
 		if (sqlString == null) {
 			return false;
 		}

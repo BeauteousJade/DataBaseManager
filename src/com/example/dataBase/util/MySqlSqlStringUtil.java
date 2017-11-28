@@ -6,7 +6,7 @@ public class MySqlSqlStringUtil {
 		if (tableName == null || columnNames == null || columnTypes == null || columnNames.length != columnTypes.length) {
 			return null;
 		}
-		String sqlString = "create table " + tableName + " ";
+		String sqlString = "create table " + tableName + "(";
 		StringBuilder stringBuilder = new StringBuilder(sqlString);
 
 		for (int i = 0; i < columnNames.length; i++) {
@@ -50,6 +50,7 @@ public class MySqlSqlStringUtil {
 				stringBuilder.append(" and ");
 			}
 		}
+		System.out.println(stringBuilder.toString());
 		return stringBuilder.toString();
 	}
 	public static String mergeUpdateString(String tableName, String[] selectArgs, String[] selectValues,

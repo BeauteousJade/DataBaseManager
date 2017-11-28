@@ -2,23 +2,26 @@ package com.example.bean.baseBean;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import com.example.annotation.MyAnnotation;
 
 public abstract class BaseBean {
 	
 	@MyAnnotation(fieldMark = MyAnnotation.FieldMark.ID)
-	private  String id = null;
+	protected  String id = null;
 	
 	public abstract boolean save();
 	public abstract boolean update();
 	public abstract boolean delete();
 	
 	public String[] getFieldNames(){
-		Field[] fields = this.getClass().getDeclaredFields();
-		String[] fieldNames = new String[fields.length];
+		List<Field> fieldList = getAllField();
+		String[] fieldNames = new String[fieldList.size()];
 		for(int i = 0; i < fieldNames.length; i++) {
-			fieldNames[i] = fields[i].getName();
+			fieldNames[i] = fieldList.get(i).getName();
 		}
 		return fieldNames;
 	}
@@ -40,11 +43,13 @@ public abstract class BaseBean {
 		
 		return fieldValues;
 	}
+
 	public String[] getFieldTypes(){
-		Field[] fields = this.getClass().getDeclaredFields();
-		String fieldTypes[] = new String[fields.length];
-		for(int i = 0; i < fields.length; i++) {
-			MyAnnotation annotation = fields[i].getAnnotation(MyAnnotation.class);
+		List<Field> fieldList = getAllField();
+		String fieldTypes[] = new String[fieldList.size()];
+		for(int i = 0; i < fieldList.size(); i++) {
+			MyAnnotation annotation = fieldList.get(i).getAnnotation(MyAnnotation.class);
+			System.out.println(annotation == null);
 			if(annotation == null) {
 				fieldTypes[i] = "varchar(200)";
 				continue;
@@ -54,7 +59,9 @@ public abstract class BaseBean {
 			}else {
 				fieldTypes[i] = "varchar(200)";
 			}
-				
+            if(annotation.fieldMark().equals(MyAnnotation.FieldMark.ID)) {
+            	 fieldTypes[i] += " primary key";
+            }
 		}
 		return fieldTypes;
 	}
@@ -73,6 +80,15 @@ public abstract class BaseBean {
 			}
 		}
 		return idName;
+	}
+	private List<Field> getAllField(){
+		List<Field> fieldList = new ArrayList<>();
+		Class<?> clazz = this.getClass();
+		while(clazz != null) {
+			fieldList.addAll(0, Arrays.asList(clazz.getDeclaredFields()));
+			clazz = clazz.getSuperclass();
+		}
+		return fieldList;
 	}
 	public String getId() {
 		return id;

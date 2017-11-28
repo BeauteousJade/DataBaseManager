@@ -2,9 +2,11 @@ package com.example.dataBase.operation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 import com.example.bean.baseBean.BaseBean;
 import com.example.dataBase.Impl.MySqlDataBaseManager;
+import com.example.dataBase.util.PropertiesUtil;
 
 public class MySqlOperation<T extends BaseBean> {
 
@@ -16,15 +18,15 @@ public class MySqlOperation<T extends BaseBean> {
 
 	public boolean isTableExist(String tableName) {
 		String[] columns = new String[0];
-		String[] selections = new String[] {"table_name"};
-		String[] selectionValues = new String[] { tableName };
+		String[] selections = new String[] { "table_name" , "TABLE_SCHEMA"};
+		String[] selectionValues = new String[] { tableName, PropertiesUtil.getValue("dataBase.properties", "dataBase")};
 		ResultSet query = mMySqlDataBaseManager.query("INFORMATION_SCHEMA.TABLES", columns, selections,
 				selectionValues);
 		boolean isExist = true;
 		try {
 			if (query == null || !query.next()) {
 				isExist = false;
-			}else {
+			} else {
 				query.close();
 			}
 		} catch (SQLException e) {
@@ -34,10 +36,13 @@ public class MySqlOperation<T extends BaseBean> {
 	}
 
 	public boolean insert(T t) {
-		if (!isTableExist(t.getClassName())) {
+		if (!isTableExist(t.getClassName())
+				&& !mMySqlDataBaseManager.ceareTable(t.getClassName(), t.getFieldNames(), t.getFieldTypes())) {
 			return false;
 		}
-		return mMySqlDataBaseManager.insert(t.getClassName(), t.getFieldNames(), t.getFieldTypes());
+		System.out.println(Arrays.toString(t.getFieldNames()));
+		System.out.println(Arrays.toString(t.getFieldTypes()));
+		return mMySqlDataBaseManager.insert(t.getClassName(), t.getFieldNames(), t.getFieldValues());
 	}
 
 	public boolean update(T t) {
