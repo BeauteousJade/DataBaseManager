@@ -16,14 +16,16 @@ public class MySqlOperation<T extends BaseBean> {
 
 	public boolean isTableExist(String tableName) {
 		String[] columns = new String[0];
-		String[] selections = new String[] { "table_name" };
+		String[] selections = new String[] {"table_name"};
 		String[] selectionValues = new String[] { tableName };
 		ResultSet query = mMySqlDataBaseManager.query("INFORMATION_SCHEMA.TABLES", columns, selections,
 				selectionValues);
-		boolean isExist = false;
+		boolean isExist = true;
 		try {
-			if (query.next()) {
-				isExist = true;
+			if (query == null || !query.next()) {
+				isExist = false;
+			}else {
+				query.close();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

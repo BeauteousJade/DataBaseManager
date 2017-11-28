@@ -86,5 +86,39 @@ public class MySqlSqlStringUtil {
 		}
 		return stringBuilder.toString();
 	}
-
+	public static String mergeInsertString(String tableName, String[] args, String[] values) {
+		if (args.length != values.length) {
+			return null;
+		}
+		String sqlString = "insert into " + tableName + " values(";
+		StringBuilder stringBuilder = new StringBuilder(sqlString);
+		for (int i = 0; i < args.length; i++) {	
+			stringBuilder.append("?");
+			if (i != args.length - 1) {
+				stringBuilder.append(", ");
+			}
+		}
+		stringBuilder.append(")");
+		return stringBuilder.toString();
+	}
+	
+	public static String mergeDeleteString(String tableName, String[] selectArgNames, String[] selectArgValues) {
+		if (selectArgNames.length != selectArgValues.length) {
+			return null;
+		}
+		String sqlString = "delete from " + tableName;
+		StringBuilder stringBuilder = new StringBuilder(sqlString);
+		for (int i = 0; i < selectArgNames.length; i++) {
+			if (i == 0) {
+				stringBuilder.append(" where ");
+			}
+			stringBuilder.append(selectArgNames[i]);
+			stringBuilder.append("=");
+			stringBuilder.append("?");
+			if (i != selectArgNames.length - 1) {
+				stringBuilder.append(" and ");
+			}
+		}
+		return stringBuilder.toString();
+	}
 }

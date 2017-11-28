@@ -33,7 +33,6 @@ public class MySqlDataBaseManager implements DataBaseManager {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		;
 	}
 
 	@Override
@@ -44,6 +43,19 @@ public class MySqlDataBaseManager implements DataBaseManager {
 
 	@Override
 	public boolean insert(String tableName, String[] argNames, String[] argValues) {
+		String sqlString = MySqlSqlStringUtil.mergeInsertString(tableName, argNames, argValues);
+		if (sqlString == null) {
+			return false;
+		}
+		try (PreparedStatement prepareStatement = mConnection.prepareStatement(sqlString);) {
+			for (int i = 0; i < argValues.length; i++) {
+				prepareStatement.setString(i + 1, argValues[i]);
+			}
+			return prepareStatement.executeUpdate() != 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
 		return false;
 	}
 
@@ -68,7 +80,19 @@ public class MySqlDataBaseManager implements DataBaseManager {
 	}
 
 	@Override
-	public boolean delete(String tableName, String[] selectArgNames, String[] selectArgValues) {
+	public boolean delete(String tableName, String[] argNames, String[] argValues) {
+		String sqlString = MySqlSqlStringUtil.mergeInsertString(tableName, argNames, argValues);
+		if (sqlString == null) {
+			return false;
+		}
+		try (PreparedStatement prepareStatement = mConnection.prepareStatement(sqlString);) {
+			for (int i = 0; i < argValues.length; i++) {
+				prepareStatement.setString(i + 1, argValues[i]);
+			}
+			return prepareStatement.executeUpdate() != 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
