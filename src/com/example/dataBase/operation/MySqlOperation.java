@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.example.annotation.MyAnnotation;
 import com.example.bean.baseBean.BaseBean;
 import com.example.dataBase.Impl.MySqlDataBaseManager;
 import com.example.dataBase.util.PropertiesUtil;
@@ -81,7 +80,7 @@ public class MySqlOperation<T extends BaseBean> {
 	 * 注解来标记。
 	 * 更新字段是非空的字段，不包括id字段。
 	 * 
-	 * @param t 需要的更新对象，必须设置id属性，其他设置的属性作为更新的字段
+	 * @param t 需要的更新对象，必须设置id属性，其他非空的属性作为更新的字段
 	 * @return boolean值，更新成功返回true，更新失败返回false
 	 */
 	public boolean update(T t) {

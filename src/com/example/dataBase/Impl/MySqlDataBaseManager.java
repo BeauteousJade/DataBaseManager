@@ -25,7 +25,7 @@ public class MySqlDataBaseManager implements DataBaseManager {
 	 * 构造方法，这个方法主要创建了Connection的对象，用于对数据库的访问
 	 */
 	public MySqlDataBaseManager() {
-		//通过调用Proerties方法从dataBase.properties文件中分别获取url，userName，password，driver的值
+		//通过调用ProertiesUtil方法从dataBase.properties文件中分别获取url，userName，password，driver的值
 		String []values = PropertiesUtil.getValues("dataBase.properties", "url", "userName", "password", "driver");
 		try {
 			Class.forName(values[3]);
