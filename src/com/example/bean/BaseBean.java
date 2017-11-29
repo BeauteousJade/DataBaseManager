@@ -1,4 +1,4 @@
-package com.example.bean.baseBean;
+package com.example.bean;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.example.bean.baseBean.BaseBean;
+import com.example.bean.BaseBean;
 import com.example.dataBase.Impl.MySqlDataBaseManager;
 import com.example.dataBase.util.PropertiesUtil;
 import com.example.exception.IdIsNullException;
