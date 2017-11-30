@@ -203,16 +203,24 @@ public abstract class BaseBean {
 	 * @return 返回一个Object类型的引用，实际上是该类的对象
 	 */
 	public Object makeObject(String[] fields, String[] values) {
+		Object obj = null;
+		try {
+			obj = this.getClass().getConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e1) {
+			e1.printStackTrace();
+			return null;
+		}
 		for (int i = 0; i < fields.length; i++) {
 			String name = fields[i].substring(0, 1).toUpperCase() + fields[i].substring(1);
 			try {
-				this.getClass().getMethod("set" + name, String.class).invoke(this, values[i]);
+				this.getClass().getMethod("set" + name, String.class).invoke(obj, values[i]);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
 					| NoSuchMethodException | SecurityException e) {
 				e.printStackTrace();
 				return null;
 			}
 		}
-		return this;
+		return obj;
 	}
 }
